@@ -28,6 +28,7 @@
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="resource/js/ie-emulation-modes-warning.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -37,7 +38,19 @@
   </head>
 
   <body>
-
+    <%
+        if(request.getParameter("err_no")!=null){
+            int err_no = Integer.parseInt(request.getParameter("err_no"));
+            switch(err_no){
+                case 1:
+                    out.println("<script>$(document).ready(function(){alert('Hatalı Kullanıcı Adı yada Şifre'); });</script>");
+                    break;
+                case 2: 
+                    out.println("<script>$(document).ready(function(){alert('Lütfen Oturum Açınız'); });</script>");
+                    break;
+            }
+        }
+    %>
     <div class="container">
 
       <form class="form-signin" method="post" action="createForm.jsp" >
@@ -45,7 +58,8 @@
         <input type="password" id="password" name="password" class="form-control" placeholder="Şifre" >
 
         <button class="btn btn-lg btn-primary btn-block" type="submit">IK Olarak Giriş Yap</button>
-        <a href="" class="btn btn-lg btn-primary btn-block">LinkedIn İle Giriş Yap</a>
+        <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86vvecy3ntqbft&redirect_uri=http://10.10.90.112:26201/mavenproject2/Actions/linkedinLogin.jsp?type=1" 
+           class="btn btn-lg btn-primary btn-block">LinkedIn İle Giriş Yap</a>
         <a href="editForms.jsp" class="btn btn-lg btn-primary btn-block">İlanları Gör</a>
       </form>
         

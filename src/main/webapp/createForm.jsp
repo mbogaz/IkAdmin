@@ -1,6 +1,24 @@
+<%@page import="java.util.ArrayList"%>
+<%@page import="Object.IKUser"%>
+<%@page import="com.mycompany.mavenproject2.LDAPLoginAuthentication"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%
-       session.setAttribute( "userName",request.getParameter("userName") );
+<%      
+
+       LDAPLoginAuthentication ldap = new LDAPLoginAuthentication();
+       ArrayList<IKUser> ikList = ldap.getIKList();
+       boolean isLogin = false;
+       for (IKUser ik : ikList) {
+              if(ik.getUserName().equals(request.getParameter("userName"))
+                      &&
+                 ik.getPasssword().equals(request.getParameter("password"))){
+                  session.setAttribute( "userName",request.getParameter("userName") );
+                  isLogin = true;
+              } 
+           }
+       if(!isLogin){
+            String redirectURL = "index.jsp?err_no=1";
+            response.sendRedirect(redirectURL);
+       }
 %>
 <%
     /*if ("POST".equalsIgnoreCase(request.getMethod())) {
