@@ -29,7 +29,7 @@
     </script>
 </head>
 <body>
- <jsp:include page="Views/navbar.jsp" />	
+ <jsp:include page="Views/navbarIk.jsp" />	
 
 <div class="container">
 	<div class="row">

@@ -1,3 +1,4 @@
+<%@page import="com.mycompany.mavenproject2.MongoDBJDBC"%>
 <%@page import="Object.SimpleUser"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="com.mycompany.mavenproject2.LinkedinAuthentication"%>
@@ -7,6 +8,7 @@
 
 <%
     LinkedinAuthentication la = new LinkedinAuthentication();
+    MongoDBJDBC mongo = new MongoDBJDBC();
     if(request.getParameter("type").equals("1")){
         String code = request.getParameter("code");
         String res = la.getToken(code);
@@ -19,9 +21,11 @@
         String lastName = user.getString("lastName");
         String id = user.getString("id");
         String headline = user.getString("headline");
-        SimpleUser su = new SimpleUser(firstName, lastName, id, headline);
-        out.println(su);
-    }else if(request.getParameter("type").equals("2")){
+        if(mongo.isUserExist(id)){
+            
+        }else{
+            mongo.addUser(mongo.createDBObject(id, firstName, lastName, headline));
+        }
         
     }
   //String code = request.getParameter("code");

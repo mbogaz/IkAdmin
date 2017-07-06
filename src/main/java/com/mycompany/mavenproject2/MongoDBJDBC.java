@@ -14,26 +14,50 @@ import com.mongodb.ServerAddress;
 import java.util.Arrays;
 
 public class MongoDBJDBC {
-
-   public static void main( String args[] ) {
-	
-      try{   
+DBCollection coll;
+   public MongoDBJDBC(){
+       try{   
 		
          // To connect to mongodb server
          MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
 			
          // Now connect to your databases
          DB db = mongoClient.getDB( "obss" );
-         System.out.println("Connect to database successfully");
 			
          char[] password= new char[10];
-         boolean auth = db.authenticate("admin", password);
-         System.out.println("Authentication: "+auth);         
+         db.authenticate("admin", password);        
 			
-         DBCollection coll = db.getCollection("Users");
-         System.out.println("Collection mycol selected successfully");
-			
-         DBCursor cursor = coll.find();
+         coll = db.getCollection("Users");
+	
+     		
+      }catch(Exception e){
+         System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+      }
+   }
+   public static void main( String args[] ) {
+	MongoDBJDBC mongo = new MongoDBJDBC();
+        BasicDBObject doc = new BasicDBObject("user", "mbogaz").
+            append("fn", "Mahmut").
+            append("ln", "Boğaz").
+            append("headline", "Marmara");
+        //mongo.addUser(doc);
+        mongo.printAll();
+        //System.out.println(mongo.isUserExist("mbMahmutogaz"));
+   }
+   public void deleteAll(){
+       BasicDBObject document = new BasicDBObject();
+
+        // Delete All documents from collection Using blank BasicDBObject
+        coll.remove(document);
+
+        // Delete All documents from collection using DBCursor
+        DBCursor cursor = coll.find();
+        while (cursor.hasNext()) {
+            coll.remove(cursor.next());
+        }
+   }
+   public void printAll(){
+       DBCursor cursor = coll.find();
          int i = 1;
 			
          while (cursor.hasNext()) { 
@@ -41,9 +65,36 @@ public class MongoDBJDBC {
             System.out.println(cursor.next()); 
             i++;
          }
+   }
+   public void addUser(BasicDBObject doc){
+        coll.insert(doc);
+   }
+   public void deleteUser(String id){
+       DBCursor cursor = coll.find();
+         int i = 1;
 			
-      }catch(Exception e){
-         System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-      }
+         while (cursor.hasNext()){   
+            DBObject obj = cursor.next();
+             if(obj.get("user").equals(id))
+                coll.remove(obj);
+         }
+                
+   }
+   public BasicDBObject createDBObject(String id,String firstName,String lastName,String headline){
+       BasicDBObject doc = new BasicDBObject("user", id).
+            append("fn", firstName).
+            append("ln", lastName).
+            append("headline", headline);
+       return doc;
+   }
+   public boolean isUserExist(String val){
+       DBCursor cursor = coll.find();
+         int i = 1;
+			
+         while (cursor.hasNext())   
+            if(cursor.next().get("user").equals(val))
+                    return true;
+       
+       return false;
    }
 }
