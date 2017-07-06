@@ -38,7 +38,7 @@
                 <!-- Form Area -->
                 <div class="form-signin" style="max-width: 1000px">
                     <!-- Form -->
-                    <form id="form1" method="post" action="createForm.jsp">
+                    <form method="post" action="createForm.jsp">
                         <!-- Left Inputs -->
                         <div class="col-xs-6 wow animated slideInLeft" data-wow-delay=".5s">
                             

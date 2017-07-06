@@ -138,12 +138,13 @@ public class MongoDBJDBC {
     }
     
 
-    public BasicDBObject createDBOUser(String id, String firstName, String lastName, String headline) {
+    public BasicDBObject createDBOUser(String id, String firstName, String lastName, String headline,String skills) {
         BasicDBObject doc = new BasicDBObject("user", id).
                 append("fn", firstName).
                 append("ln", lastName).
                 append("headline", headline).
                 append("type","user");
+        if(skills!=null) doc.append("skills", skills);
         return doc;
     }
 
@@ -175,4 +176,16 @@ public class MongoDBJDBC {
             
          }
     }
+    public void updateUser(BasicDBObject newObj){
+        DBCursor cursor = coll.find();
+			
+         while (cursor.hasNext()) { 
+            DBObject obj = cursor.next();
+            if(obj.get("type").equals("user") && obj.get("user").equals(newObj.get("user"))){
+                coll.update(obj, newObj);
+                return;
+            }
+            
+         }
+    }    // "user" : "cLqL5-REeC" , "fn" : "Mahmut" , "ln" : "Boğaz" , "headline" : "Summer Intern at OBSS" , "type" : "user"}
 }

@@ -17,19 +17,27 @@
         //out.println("token:"+token);
         String info = la.authLinkedin(token);
         JSONObject user = new JSONObject(info);
-        String firstName = user.getString("firstName");
-        String lastName = user.getString("lastName");
+        
         String id = user.getString("id");
-        String headline = user.getString("headline");
-        if(mongo.isUserExist(id)){
-            
-        }else{
-            mongo.addItemToDB(mongo.createDBOUser(id, firstName, lastName, headline));
+        //id her türlü linkedin den çekilecek
+        String firstName="",lastName="",headline="",skills="";
+        if(mongo.isUserExist(id)){//kayıtlıysa db den çek
+            obj = mongo.getElement("user", id);
+            firstName = obj.getString("fn"      );
+            lastName  = obj.getString("ln"      );
+            headline  = obj.getString("headline");
+            skills    = obj.getString("skills"  );
+        }else{//kayıtlı değilse linkedin den çek
+            firstName = user.getString("firstName");
+            lastName  = user.getString("lastName" );
+            headline  = user.getString("headline" );
+            mongo.addItemToDB(mongo.createDBOUser(id, firstName, lastName, headline,null));
         }
-        session.setAttribute( "id",id);
+        session.setAttribute( "id"       ,       id);
         session.setAttribute( "firstName",firstName);
-        session.setAttribute( "lastName",lastName);
-        session.setAttribute( "headline",headline);
+        session.setAttribute( "lastName" , lastName);
+        session.setAttribute( "headline" , headline);
+        session.setAttribute( "skills"   ,   skills);
         response.sendRedirect(request.getContextPath() + "/listJobs.jsp");
     }
   //String code = request.getParameter("code");

@@ -69,7 +69,7 @@
         <td><% out.println(obj.getString("closeTime")); %></td>
         <td><% out.println(obj.getString("definition")); %></td>
         <td><p data-placement="top" data-toggle="tooltip" title="Düzenle">
-                <a href="editForm.jsp?advert=<% out.println(obj.getInt("advert")); %>">
+                <a href="">
                 <button class="btn btn-success btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" >Başvur</button></p>
                 </a>
         </td>
