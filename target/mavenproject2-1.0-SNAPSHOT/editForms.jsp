@@ -1,3 +1,6 @@
+<%@page import="java.util.ArrayList"%>
+<%@page import="org.json.JSONObject"%>
+<%@page import="service.MongoDBJDBC"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -45,7 +48,8 @@
                    <thead>
                    
                     <th>İlan İsmi</th>
-                    <th>Kapanış tarihi</th>
+                    <th>Aktivasyon Tarihi</th>
+                    <th>Kapanış Tarihi</th>
                     <th>Açıklama</th>
                     <th>Aktiflik Durumu</th>
                     <th>Düzenle</th>
@@ -53,13 +57,23 @@
                    </thead>
     <tbody>
     
-   <% for(int i=0;i<8;i++){ %>     
+   <% 
+       MongoDBJDBC mongo = new MongoDBJDBC();
+       ArrayList<JSONObject> list = mongo.getList("advert");
+       
+       for(JSONObject obj:list){ 
+   %>     
     <tr>
-    <td>Developer</td>
-    <td>25.05.2017</td>
-    <td>bize smart developer lazım</td>
-    <td>Aktif</td>
-    <td><p data-placement="top" data-toggle="tooltip" title="Düzenle"><button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" ><span class="glyphicon glyphicon-pencil"></span></button></p></td>
+        <td><% out.println(obj.getString("header")); %></td>
+        <td><% out.println(obj.getString("activationTime")); %></td>
+        <td><% out.println(obj.getString("closeTime")); %></td>
+        <td><% out.println(obj.getString("definition")); %></td>
+        <td><% out.println(obj.getBoolean("active")==true?"Aktif":"Aktif Değil"); %></td>
+        <td><p data-placement="top" data-toggle="tooltip" title="Düzenle">
+                <a href="editForm.jsp?advert=<% out.println(obj.getInt("advert")); %>">
+                <button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" >Düzenle</button></p>
+                </a>
+        </td>
     </tr>
     
     <% } %>

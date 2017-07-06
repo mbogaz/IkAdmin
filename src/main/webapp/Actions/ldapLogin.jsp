@@ -1,8 +1,8 @@
+<%@page import="service.LDAPLoginAuthentication"%>
 <%@page import="Object.IKUser"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="com.mycompany.mavenproject2.LDAPLoginAuthentication"%>
 <%
-     LDAPLoginAuthentication ldap = new LDAPLoginAuthentication();
+       LDAPLoginAuthentication ldap = new LDAPLoginAuthentication();
        ArrayList<IKUser> ikList = ldap.getIKList();
        boolean isLogin = false;
        for (IKUser ik : ikList) {
@@ -13,12 +13,11 @@
                   isLogin = true;
               } 
            }
-       if(!isLogin){
-            String redirectURL = "index.jsp?err_no=1";
-            response.sendRedirect(redirectURL);
-       }
-       response.sendRedirect(request.getContextPath() + "/createForm.jsp");
-%>
+       if(!isLogin)
+           response.sendRedirect(request.getContextPath() + "/index.jsp?err_no=1");
+       else
+            response.sendRedirect(request.getContextPath() + "/createForm.jsp");
+     %>
 <%
     /*if ("POST".equalsIgnoreCase(request.getMethod())) {
         out.println("POST:"+request.getParameter("name"));

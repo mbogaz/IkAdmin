@@ -10,12 +10,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-            <a class="navbar-brand" href="#">Hoşgeldiniz <% out.println(session.getAttribute( "fn" )); %></a>
+            <a class="navbar-brand" href="#">Hoşgeldiniz <% out.println(session.getAttribute( "firstName" )); %></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="createForm.jsp">Yeni İlan Ekle</a></li>
             <li><a href="editForms.jsp">İlanları Düzenle</a></li>
+            <li><a href="Profil">Profilini Güncelle</a></li>
             <li><a href="Actions/logout.jsp">Çıkış Yap</a></li>
           </ul>
         </div>

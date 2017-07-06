@@ -1,6 +1,7 @@
+Object/Advert.class
 Object/SimpleUser.class
-com/mycompany/mavenproject2/MongoDBJDBC.class
-com/mycompany/mavenproject2/LinkedinAuthentication.class
-com/mycompany/mavenproject2/Controller.class
-com/mycompany/mavenproject2/LDAPLoginAuthentication.class
 Object/IKUser.class
+service/MongoDBJDBC.class
+service/LDAPLoginAuthentication.class
+service/LinkedinAuthentication.class
+com/mycompany/mavenproject2/Controller.class

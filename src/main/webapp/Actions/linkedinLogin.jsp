@@ -1,7 +1,7 @@
-<%@page import="com.mycompany.mavenproject2.MongoDBJDBC"%>
+<%@page import="service.MongoDBJDBC"%>
 <%@page import="Object.SimpleUser"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="com.mycompany.mavenproject2.LinkedinAuthentication"%>
+<%@page import="service.LinkedinAuthentication"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 
@@ -24,9 +24,13 @@
         if(mongo.isUserExist(id)){
             
         }else{
-            mongo.addUser(mongo.createDBObject(id, firstName, lastName, headline));
+            mongo.addItemToDB(mongo.createDBOUser(id, firstName, lastName, headline));
         }
-        
+        session.setAttribute( "id",id);
+        session.setAttribute( "firstName",firstName);
+        session.setAttribute( "lastName",lastName);
+        session.setAttribute( "headline",headline);
+        response.sendRedirect(request.getContextPath() + "/listJobs.jsp");
     }
   //String code = request.getParameter("code");
   
@@ -34,13 +38,3 @@
   out.println(res);*/
     %>
 
-
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
-</html>

@@ -53,9 +53,9 @@
     %>
     <div class="container">
 
-      <form class="form-signin" method="post" action="ldapLogin.jsp" >
-        <input type="text" id="userName" name="userName" class="form-control" placeholder="Kullanıcı Adı" autofocus>
-        <input type="password" id="password" name="password" class="form-control" placeholder="Şifre" >
+      <form class="form-signin" method="post" action="Actions/ldapLogin.jsp" >
+        <input type="text" id="userName" name="userName" class="form-control" placeholder="Kullanıcı Adı" value="ahmet" autofocus>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Şifre" value="ahmet">
 
         <button class="btn btn-lg btn-primary btn-block" type="submit">IK Olarak Giriş Yap</button>
         <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86vvecy3ntqbft&redirect_uri=http://localhost:26201/mavenproject2/Actions/linkedinLogin.jsp?type=1" 
