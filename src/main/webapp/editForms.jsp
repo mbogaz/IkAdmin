@@ -1,3 +1,4 @@
+<%@page import="com.mycompany.mavenproject2.Helper"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="service.MongoDBJDBC"%>
@@ -15,9 +16,8 @@
     <style type="text/css">
     
     </style>
-    <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript">
         window.alert = function(){};
         var defaultCSS = document.getElementById('bootstrap-css');
@@ -25,10 +25,6 @@
             if(css) $('head > link').filter(':first').replaceWith('<link rel="stylesheet" href="'+ css +'" type="text/css" />'); 
             else $('head > link').filter(':first').replaceWith(defaultCSS); 
         }
-        $( document ).ready(function() {
-          var iframe_height = parseInt($('html').height()); 
-          window.parent.postMessage( iframe_height, 'https://bootsnipp.com');
-        });
     </script>
 </head>
 <body>
@@ -59,9 +55,12 @@
     
    <% 
        MongoDBJDBC mongo = new MongoDBJDBC();
+       Helper h = new Helper();
        ArrayList<JSONObject> list = mongo.getList("advert");
-       
+       h.sortArrayListById(list);
+       int i = 0;
        for(JSONObject obj:list){ 
+        int advertCode = obj.getInt("advert");
    %>     
     <tr>
         <td><% out.println(obj.getString("header")); %></td>
@@ -69,14 +68,47 @@
         <td><% out.println(obj.getString("closeTime")); %></td>
         <td><% out.println(obj.getString("definition")); %></td>
         <td><% out.println(obj.getBoolean("active")==true?"Aktif":"Aktif Değil"); %></td>
-        <td><p data-placement="top" data-toggle="tooltip" title="Düzenle">
+        <td><p data-placement="top" data-toggle="tooltip">
+                <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal<%out.print(i);%>">Başvurular</button>
                 <a href="editForm.jsp?advert=<% out.println(obj.getInt("advert")); %>">
                 <button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" >Düzenle</button></p>
                 </a>
+                
+                <!-- Modal -->
+                <div id="myModal<%out.print(i);%>" class="modal fade" role="dialog">
+                  <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><% out.println("Başvuru Yapanlar"); %></h4>
+                      </div>
+                      <div class="modal-body">
+                        <p><%
+                            
+                            ArrayList<JSONObject> subList = mongo.getRegistersByAdvertCode(advertCode);
+                            for(JSONObject subObj:subList){
+                                JSONObject userObj = mongo.getElement("user", subObj.getString("userId"));
+                                out.println(userObj.getString("fn")+"</br>");    
+                            }
+                            
+                            
+                            %></p>
+                        </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div> 
+
+                
         </td>
     </tr>
     
-    <% } %>
+    <% i++;} %>
    
     
    

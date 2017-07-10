@@ -60,7 +60,7 @@
        final String skills = session.getAttribute("skills")+"";
        //out.print(session.getAttribute("skills"));
        ArrayList<JSONObject> list = mongo.getList("advert");
-       h.sortArrayList(list, skills);
+       h.sortArrayListByRelevance(list, skills);
 
        int i = 0;
        for(JSONObject obj:list){ 

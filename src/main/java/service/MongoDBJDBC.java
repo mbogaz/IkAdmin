@@ -152,6 +152,19 @@ public class MongoDBJDBC {
         
         return list;
     }
+    public ArrayList<JSONObject> getRegistersByAdvertCode(int advertCode){
+        ArrayList<JSONObject> list = new ArrayList<>();
+        
+        DBCursor cursor = coll.find();
+        
+        while (cursor.hasNext()) {
+            DBObject obj = cursor.next();
+            if(obj.get("type").equals("register") && obj.get("advertCode").equals(advertCode))
+                list.add(new JSONObject(JSON.serialize(obj)));
+        }
+        
+        return list;
+    }
     
     public JSONObject getElement(String key,String val){
         

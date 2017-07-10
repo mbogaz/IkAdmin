@@ -22,16 +22,25 @@ public class Helper {
     public Helper(){
         
     }
-    public void sortArrayList(ArrayList<JSONObject> list,final String skills){
+    public void sortArrayListByRelevance(ArrayList<JSONObject> list,final String skills){
        Collections.sort(list, new Comparator<JSONObject>() {
+            @Override
+            public int compare(JSONObject obj1, JSONObject obj2)
+            {
 
-        @Override
-        public int compare(JSONObject obj1, JSONObject obj2)
-        {
+                return  getConflictNumber(obj1, skills)<getConflictNumber(obj2, skills)?1:-1;
+            }
+        });
+    }
+    public void sortArrayListById(ArrayList<JSONObject> list){
+               Collections.sort(list, new Comparator<JSONObject>() {
+            @Override
+            public int compare(JSONObject obj1, JSONObject obj2)
+            {
 
-            return  getConflictNumber(obj1, skills)<getConflictNumber(obj2, skills)?1:-1;
-        }
-    });
+                return  obj1.getInt("advert")<obj2.getInt("advert")?-1:1;
+            }
+        });
     }
     
     public int getConflictNumber(JSONObject obj,String skills){
