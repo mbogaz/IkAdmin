@@ -47,6 +47,7 @@ public class MongoDBJDBC {
                 append("headline", "Marmara");*/
         //mongo.addUser(doc);
         //mongo.updateAdvert(mongo.createDBOAdvert(1, "İlan aAa", "Çok kod yazılmalı", "c,java", "2017-07-01", "2017-08-01", true));
+        //System.out.println(mongo.isUserRegistered("RfBtpuSTyl", 3));
         mongo.printAll();
         //System.out.println(mongo.getElement("advert", 1+""));
         //see records for a type
@@ -94,16 +95,43 @@ public class MongoDBJDBC {
         }
 
     }
-    
-    
-
-    public boolean isUserExist(String val) {
+    public void deleteRegister(String userId,int advertCode) {
         DBCursor cursor = coll.find();
         int i = 1;
 
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
+            if (obj.get("type").equals("register") 
+                    && obj.get("userId").equals(userId)
+                    && obj.get("advertCode").equals(advertCode)) {
+                coll.remove(obj);
+            }
+            
+        }
+
+    }
+    
+
+    public boolean isUserExist(String val) {
+        DBCursor cursor = coll.find();
+
+        while (cursor.hasNext()) {
+            DBObject obj = cursor.next();
             if (obj.get("type").equals("user") && obj.get("user").equals(val)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    public boolean isUserRegistered(String userId,int advertCode){
+        DBCursor cursor = coll.find();
+
+        while (cursor.hasNext()) {
+            DBObject obj = cursor.next();
+            if (obj.get("type").equals("register") 
+                    && obj.get("userId").equals(userId)
+                    && obj.get("advertCode").equals(advertCode)) {
                 return true;
             }
         }
@@ -142,12 +170,17 @@ public class MongoDBJDBC {
         BasicDBObject doc = new BasicDBObject("user", id).
                 append("fn", firstName).
                 append("ln", lastName).
+                append("skills", skills).
                 append("headline", headline).
                 append("type","user");
-        if(skills!=null) doc.append("skills", skills);
         return doc;
     }
-
+    public BasicDBObject createDBORegister(String userId,int advertCode){
+        BasicDBObject doc = new BasicDBObject("userId", userId).
+                append("advertCode", advertCode).
+                append("type","register");
+        return doc;
+    }
     public BasicDBObject createDBOAdvert(int code, String header, String definition, String requirements
             , String activationTime, String closeTime,boolean active) {
         BasicDBObject doc = new BasicDBObject("advert", code).
@@ -187,5 +220,5 @@ public class MongoDBJDBC {
             }
             
          }
-    }    // "user" : "cLqL5-REeC" , "fn" : "Mahmut" , "ln" : "Boğaz" , "headline" : "Summer Intern at OBSS" , "type" : "user"}
+    }    
 }

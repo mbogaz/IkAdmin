@@ -1,3 +1,6 @@
+<%@page import="java.util.Comparator"%>
+<%@page import="java.util.Collections"%>
+<%@page import="com.mycompany.mavenproject2.Helper"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="service.MongoDBJDBC"%>
@@ -15,9 +18,8 @@
     <style type="text/css">
     
     </style>
-    <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript">
         window.alert = function(){};
         var defaultCSS = document.getElementById('bootstrap-css');
@@ -25,10 +27,6 @@
             if(css) $('head > link').filter(':first').replaceWith('<link rel="stylesheet" href="'+ css +'" type="text/css" />'); 
             else $('head > link').filter(':first').replaceWith(defaultCSS); 
         }
-        $( document ).ready(function() {
-          var iframe_height = parseInt($('html').height()); 
-          window.parent.postMessage( iframe_height, 'https://bootsnipp.com');
-        });
     </script>
 </head>
 <body>
@@ -50,28 +48,73 @@
                     <th>İlan İsmi</th>
                     <th>Aktivasyon Tarihi</th>
                     <th>Kapanış Tarihi</th>
-                    <th>Açıklama</th>
-                    <th>Düzenle</th>
+                    <th>Kodu</th>
+                    <th>Eylemler</th>
                     
                    </thead>
     <tbody>
     
    <% 
        MongoDBJDBC mongo = new MongoDBJDBC();
+       final Helper h = new Helper();
+       final String skills = session.getAttribute("skills")+"";
+       //out.print(session.getAttribute("skills"));
        ArrayList<JSONObject> list = mongo.getList("advert");
-       
+       h.sortArrayList(list, skills);
+
+       int i = 0;
        for(JSONObject obj:list){ 
             if(obj.getBoolean("active")){
+                String userId = session.getAttribute("id")+"";
+                int advertCode = obj.getInt("advert");
+                boolean isRegistered = mongo.isUserRegistered(userId, advertCode);
    %>     
     <tr>
         <td><% out.println(obj.getString("header")); %></td>
         <td><% out.println(obj.getString("activationTime")); %></td>
         <td><% out.println(obj.getString("closeTime")); %></td>
-        <td><% out.println(obj.getString("definition")); %></td>
-        <td><p data-placement="top" data-toggle="tooltip" title="Düzenle">
-                <a href="">
-                <button class="btn btn-success btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" >Başvur</button></p>
+        <td><% out.println(obj.getInt("advert")); %></td>
+        <td><p data-placement="top" data-toggle="tooltip">
+                
+                <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal<%out.print(i);%>">Detayları Gör</button>
+                
+                <%if(isRegistered) {%>
+                <a href="Actions/register.jsp?type=2&advertCode=<%out.print(advertCode);%>">
+                    <button class="btn btn-danger btn-xs">Başvuruyu Geri Al</button></p>
                 </a>
+                <% }else{ %>
+                <a href="Actions/register.jsp?type=1&advertCode=<%out.print(advertCode);%>">
+                    <button class="btn btn-success btn-xs">Başvur</button></p>
+                </a>
+                <% } %>    
+                       
+                <!-- Modal -->
+                <div id="myModal<%out.print(i);%>" class="modal fade" role="dialog">
+                  <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><% out.println(obj.getString("header")); %></h4>
+                      </div>
+                      <div class="modal-body">
+                        <p>İş Tanımı:<% out.println(obj.getString("definition")); %></p>
+                        </br></br>
+                        <p>Adayda Bulunması Beklenen Özellikler:<% out.println(obj.getString("requirements")); %></p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>    
+                    
+                    
+                <% i++;  %>
+                
+                
         </td>
     </tr>
     

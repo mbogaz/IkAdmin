@@ -26,12 +26,13 @@
             firstName = obj.getString("fn"      );
             lastName  = obj.getString("ln"      );
             headline  = obj.getString("headline");
-            skills    = obj.getString("skills"  );
+            if(obj.isNull("skills")) skills ="";
+            else skills    = obj.getString("skills"  );
         }else{//kayıtlı değilse linkedin den çek
             firstName = user.getString("firstName");
             lastName  = user.getString("lastName" );
             headline  = user.getString("headline" );
-            mongo.addItemToDB(mongo.createDBOUser(id, firstName, lastName, headline,null));
+            mongo.addItemToDB(mongo.createDBOUser(id, firstName, lastName, headline,""));
         }
         session.setAttribute( "id"       ,       id);
         session.setAttribute( "firstName",firstName);
