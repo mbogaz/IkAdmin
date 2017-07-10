@@ -5,3 +5,4 @@ service/MongoDBJDBC.class
 service/LDAPLoginAuthentication.class
 service/LinkedinAuthentication.class
 com/mycompany/mavenproject2/Controller.class
+com/mycompany/mavenproject2/Helper.class

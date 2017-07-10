@@ -7,17 +7,9 @@ package com.mycompany.mavenproject2;
 
 
 public class Controller {
-  static Controller controller;  
-  
-  
-  
-  
-  
-  
-  public static Controller getController(){
-    if(controller==null)
-        controller = new Controller();
-    return controller;
-}
+    public Controller(){
+        
+    }
+        
 
 }
