@@ -1,5 +1,7 @@
 Object/Advert.class
 Object/SimpleUser.class
+com/mycompany/mavenproject2/Helper$2.class
+com/mycompany/mavenproject2/Helper$1.class
 Object/IKUser.class
 service/MongoDBJDBC.class
 service/LDAPLoginAuthentication.class

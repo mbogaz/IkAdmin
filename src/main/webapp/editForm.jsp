@@ -60,9 +60,9 @@
                             
                             <input type="text" name="header" class="form" value="<% out.print(header); %>" placeholder="Başlık" />
                             
-                            Aktivasyon Zamanı: <input type="date" value="<% out.print(activationTime); %>" name="activationTime" class="form" />                            
+                            Aktivasyon Zamanı: <input type="datetime-local" value="<% out.print(activationTime); %>" name="activationTime" class="form" />                            
                             
-                            Kapanma Zamanı: <input type="date" value="<% out.print(closeTime); %>" name="closeTime" class="form" />
+                            Kapanma Zamanı: <input type="datetime-local" value="<% out.print(closeTime); %>" name="closeTime" class="form" />
                             
                             <div class="form">
                                 İlan Aktif mi: <input type="checkbox" name="isActive" data-toggle="toggle" <% if(active)out.print("checked"); %>>

@@ -1,3 +1,6 @@
+<%@page import="java.util.Calendar"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="service.MongoDBJDBC"%>
@@ -60,12 +63,21 @@
        ArrayList<JSONObject> list = mongo.getList("advert");
        
        for(JSONObject obj:list){ 
-            if(obj.getBoolean("active")){
+            String activationTime = obj.getString("activationTime").replace("T", " ");
+            String closeTime = obj.getString("closeTime").replace("T", " ");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-dd-MM HH:mm");
+            Date parsedDateA = formatter.parse(activationTime);
+            Date parsedDateC = formatter.parse(closeTime);
+            Date currDate = Calendar.getInstance().getTime(); 
+            boolean showAdvert = (currDate.compareTo(parsedDateA)>=0) 
+                    && (currDate.compareTo(parsedDateC)<0)
+                    && obj.getBoolean("active");
+            if(showAdvert){
    %>     
     <tr>
         <td><% out.println(obj.getString("header")); %></td>
-        <td><% out.println(obj.getString("activationTime")); %></td>
-        <td><% out.println(obj.getString("closeTime")); %></td>
+        <td><% out.println(activationTime.replace(" ", "/")); %></td>
+        <td><% out.println(closeTime.replace(" ", "/")); %></td>
         <td><% out.println(obj.getString("definition")); %></td>
     </tr>
     

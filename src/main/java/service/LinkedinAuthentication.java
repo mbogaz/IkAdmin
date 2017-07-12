@@ -45,7 +45,8 @@ public class LinkedinAuthentication {
     public String authLinkedin(String token){
         String res;
         HttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet("https://api.linkedin.com/v1/people/~?format=json");
+        HttpGet httpGet = new HttpGet("https://api.linkedin.com/v1/people/"
+                + "~:(email-address,id,firstName,lastName,headline,location,picture-url)?format=json");
         /*httpGet.addHeader(BasicScheme.authenticate(
          new UsernamePasswordCredentials("Authorization", "Bearer AQVxLlx7B8zZ64HgmZ6jkWkzN0qOPJxUhqEyIRdvjVzBFoRT7U4V_d0yB0-pH8fFl69ebNYQfuQC4bE07bI5jp-GI0qmPbvP02iO8IN3knmTpVo17PH7F1Morz94Vl-d3QcP18fbsyeaK45MsFoldjmHd8jxAFXb9bpt8xNdjoe2_5l5Q5M"),
          "UTF-8", false));*/

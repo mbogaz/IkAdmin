@@ -9,7 +9,10 @@
         String ln = request.getParameter("ln");
         String headline = request.getParameter("headline");
         String skills = request.getParameter("skills");
-        mongo.updateUser(mongo.createDBOUser(session.getAttribute("id")+"", fn, ln, headline,skills));
+        String location = request.getParameter("location");
+        String emailAddress = request.getParameter("emailAddress");
+        mongo.updateUser(mongo.createDBOUser(session.getAttribute("id")+"", fn, ln,
+                headline,skills,location,session.getAttribute("pictureUrl")+"",emailAddress));
         session.setAttribute("skills", skills);
         response.sendRedirect(request.getContextPath() + "/listJobs.jsp");
         
@@ -37,8 +40,10 @@
                 <div class="form-signin" style="max-width: 1000px">
                     <!-- Form -->
                     <form method="post" action="userProfile.jsp">
+                        
                         <!-- Left Inputs -->
                         <div class="col-xs-6 wow animated slideInLeft" data-wow-delay=".5s">
+                            <image src="<% out.println(session.getAttribute("pictureUrl")); %>" class="img-thumbnail center-block">
                             İsim:<input type="text" name="fn" class="form" value="<% out.print(session.getAttribute("firstName")); %>" required/>
                             Soyisim:<input type="text" name="ln" class="form" value="<% out.print(session.getAttribute("lastName")); %>" required/>
                             Durum:<input type="text" name="headline" class="form" value="<% out.print(session.getAttribute("headline")); %>" required/>                           
@@ -46,26 +51,21 @@
                             </div><!-- End Left Inputs -->
                         <!-- Right Inputs -->
                         <div class="col-xs-6 wow animated slideInRight" data-wow-delay=".5s">
-                            
+                            Lokasyon:<input type="text" name="location" class="form" value="<% out.print(session.getAttribute("location")); %>" required/>
+                            E mail:<input type="text" name="emailAddress" class="form" value="<% out.print(session.getAttribute("emailAddress")); %>" required/>
 			<p><label>Kişisel Ve Profesyonel Özellikler</label>
                             <input class="form textarea" id="tags_2" name="skills" type="text" class="tags" value="<% out.print(session.getAttribute("skills")); %>" /></p>
                         </div><!-- End Right Inputs -->
                         <!-- Bottom Submit -->
                         <div class="relative fullwidth col-xs-12">
                             <!-- Send Button -->
-                            <button type="submit" id="submit" name="submit" class="form-btn semibold">Oluştur</button> 
+                            <button type="submit" id="submit" name="submit" class="form-btn semibold">Güncelle</button> 
                         </div><!-- End Bottom Submit -->
                         <!-- Clear -->
                         <div class="clear"></div>
                     </form>
 
-                    <!-- Your Mail Message -->
-                    <div class="mail-message-area">
-                        <!-- Message -->
-                        <div class="alert gray-bg mail-message not-visible-message">
-                            <strong>Thank You !</strong> Your email has been delivered.
-                        </div>
-                    </div>
+                  
 
                 </div><!-- End Contact Form Area -->
 </div> <!-- /container -->

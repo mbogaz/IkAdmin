@@ -1,3 +1,6 @@
+<%@page import="java.util.Calendar"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.Comparator"%>
 <%@page import="java.util.Collections"%>
 <%@page import="com.mycompany.mavenproject2.Helper"%>
@@ -64,6 +67,15 @@
 
        int i = 0;
        for(JSONObject obj:list){ 
+            String activationTime = obj.getString("activationTime").replace("T", " ");
+            String closeTime = obj.getString("closeTime").replace("T", " ");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-dd-MM HH:mm");
+            Date parsedDateA = formatter.parse(activationTime);
+            Date parsedDateC = formatter.parse(closeTime);
+            Date currDate = Calendar.getInstance().getTime(); 
+            boolean showAdvert = (currDate.compareTo(parsedDateA)>=0) 
+                    && (currDate.compareTo(parsedDateC)<0)
+                    && obj.getBoolean("active");
             if(obj.getBoolean("active")){
                 String userId = session.getAttribute("id")+"";
                 int advertCode = obj.getInt("advert");
@@ -71,8 +83,8 @@
    %>     
     <tr>
         <td><% out.println(obj.getString("header")); %></td>
-        <td><% out.println(obj.getString("activationTime")); %></td>
-        <td><% out.println(obj.getString("closeTime")); %></td>
+        <td><% out.println(activationTime.replace(" ", "/")); %></td>
+        <td><% out.println(closeTime.replace(" ", "/")); %></td>
         <td><% out.println(obj.getInt("advert")); %></td>
         <td><p data-placement="top" data-toggle="tooltip">
                 

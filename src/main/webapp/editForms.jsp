@@ -69,9 +69,9 @@
         <td><% out.println(obj.getString("definition")); %></td>
         <td><% out.println(obj.getBoolean("active")==true?"Aktif":"Aktif Değil"); %></td>
         <td><p data-placement="top" data-toggle="tooltip">
-                <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal<%out.print(i);%>">Başvurular</button>
+                <button type="button" class="btn btn-info btn-s" data-toggle="modal" data-target="#myModal<%out.print(i);%>">Başvurular</button>
                 <a href="editForm.jsp?advert=<% out.println(obj.getInt("advert")); %>">
-                <button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" >Düzenle</button></p>
+                <button class="btn btn-primary btn-s" data-title="Edit" data-toggle="modal" data-target="#edit" >Düzenle</button></p>
                 </a>
                 
                 <!-- Modal -->
@@ -90,7 +90,10 @@
                             ArrayList<JSONObject> subList = mongo.getRegistersByAdvertCode(advertCode);
                             for(JSONObject subObj:subList){
                                 JSONObject userObj = mongo.getElement("user", subObj.getString("userId"));
-                                out.println(userObj.getString("fn")+"</br>");    
+                                out.println(userObj.getString("fn")+" "+userObj.getString("ln")
+                                    +"<a href=\"userDetail.jsp?user="+userObj.getString("user")+"\">"
+                                    + "<button style=\"position:absolute;right:250px;\" class=\"btn btn-primary btn-xs\">Detay</button>"
+                                    + "</a></br></br>");    
                             }
                             
                             

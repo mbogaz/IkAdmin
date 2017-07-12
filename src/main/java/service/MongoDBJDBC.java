@@ -14,11 +14,14 @@ import com.mongodb.ServerAddress;
 import com.mongodb.util.JSON;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 import org.json.JSONObject;
 
 public class MongoDBJDBC {
 
-    DBCollection coll;
+    DBCollection collUser;
+    DBCollection collAdvert;
+    DBCollection collRegister;
 
     public MongoDBJDBC() {
         try {
@@ -32,7 +35,9 @@ public class MongoDBJDBC {
             char[] password = new char[10];
             db.authenticate("admin", password);
 
-            coll = db.getCollection("Users");
+            collUser = db.getCollection("Users");
+            collAdvert = db.getCollection("Advert");
+            collRegister = db.getCollection("Register");
 
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -48,6 +53,7 @@ public class MongoDBJDBC {
         //mongo.addUser(doc);
         //mongo.updateAdvert(mongo.createDBOAdvert(1, "İlan aAa", "Çok kod yazılmalı", "c,java", "2017-07-01", "2017-08-01", true));
         //System.out.println(mongo.isUserRegistered("RfBtpuSTyl", 3));
+        //mongo.getRegistersByAdvertCode(1);
         mongo.printAll();
         //System.out.println(mongo.getElement("advert", 1+""));
         //see records for a type
@@ -62,176 +68,228 @@ public class MongoDBJDBC {
         //use wisely,removes every entry in db
         BasicDBObject document = new BasicDBObject();
 
-        // Delete All documents from collection Using blank BasicDBObject
-        coll.remove(document);
-
-        // Delete All documents from collection using DBCursor
-        DBCursor cursor = coll.find();
-        while (cursor.hasNext()) {
-            coll.remove(cursor.next());
+        DBCursor[] cursors = {collUser.find(), collAdvert.find(), collRegister.find()};
+        DBCollection[] colls = {collUser, collAdvert, collRegister};
+        for (int i = 0; i < 3; i++) {
+            colls[i].remove(document);
+            while (cursors[i].hasNext()) {
+                colls[i].remove(cursors[i].next());
+            }
         }
     }
 
     public void printAll() {
-        DBCursor cursor = coll.find();
-        int i = 1;
-
-        while (cursor.hasNext()) {
-            System.out.println("Inserted Document: " + i);
-            System.out.println(cursor.next());
-            i++;
+        DBCursor[] cursors = {collUser.find(), collAdvert.find(), collRegister.find()};
+        for (int index = 0; index < 3; index++) {
+            System.out.println(index + "- start");
+            while (cursors[index].hasNext()) {
+                System.out.println(cursors[index].next());
+            }
+            System.out.println(index + "- done");
         }
     }
 
     public void deleteUser(String id) {
-        DBCursor cursor = coll.find();
+        DBCursor cursor = collUser.find();
         int i = 1;
 
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
             if (obj.get("user").equals(id)) {
-                coll.remove(obj);
+                collUser.remove(obj);
             }
         }
 
     }
-    public void deleteRegister(String userId,int advertCode) {
-        DBCursor cursor = coll.find();
+
+    public void deleteRegister(String userId, int advertCode) {
+        DBCursor cursor = collRegister.find();
         int i = 1;
 
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
-            if (obj.get("type").equals("register") 
-                    && obj.get("userId").equals(userId)
+            if (obj.get("userId").equals(userId)
                     && obj.get("advertCode").equals(advertCode)) {
-                coll.remove(obj);
+                collRegister.remove(obj);
             }
-            
+
         }
 
     }
-    
 
     public boolean isUserExist(String val) {
-        DBCursor cursor = coll.find();
+        DBCursor cursor = collUser.find();
 
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
-            if (obj.get("type").equals("user") && obj.get("user").equals(val)) {
+            if (obj.get("user").equals(val)) {
                 return true;
             }
         }
 
         return false;
     }
-    public boolean isUserRegistered(String userId,int advertCode){
-        DBCursor cursor = coll.find();
+
+    public boolean isUserRegistered(String userId, int advertCode) {
+        DBCursor cursor = collRegister.find();
 
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
-            if (obj.get("type").equals("register") 
-                    && obj.get("userId").equals(userId)
-                    && obj.get("advertCode").equals(advertCode)) {
+            if (obj.get("userId").equals(userId) && obj.get("advertCode").equals(advertCode)) {
                 return true;
             }
         }
 
         return false;
     }
-    
-    public ArrayList<JSONObject> getList(String type){
+
+    public ArrayList<JSONObject> getList(String type) {
         ArrayList<JSONObject> list = new ArrayList<>();
-        
-        DBCursor cursor = coll.find();
-        
+        DBCursor cursor = null;
+        switch (type) {
+            case "user":
+                cursor = collUser.find();
+                break;
+            case "advert":
+                cursor = collAdvert.find();
+                break;
+            case "register":
+                cursor = collRegister.find();
+                break;
+        }
+
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
-            if(obj.get("type").equals(type))
-                list.add(new JSONObject(JSON.serialize(obj)));
+            list.add(new JSONObject(JSON.serialize(obj)));
         }
-        
+
         return list;
     }
-    public ArrayList<JSONObject> getRegistersByAdvertCode(int advertCode){
+
+    public ArrayList<JSONObject> getRegistersByAdvertCode(int advertCode) {
         ArrayList<JSONObject> list = new ArrayList<>();
-        
-        DBCursor cursor = coll.find();
-        
+
+        DBCursor cursor = collRegister.find();
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
-            if(obj.get("type").equals("register") && obj.get("advertCode").equals(advertCode))
+            if (obj.get("advertCode").equals(advertCode)) {
                 list.add(new JSONObject(JSON.serialize(obj)));
+            }
         }
-        
+
         return list;
     }
-    
-    public JSONObject getElement(String key,String val){
-        
-        DBCursor cursor = coll.find();
+
+    public ArrayList<JSONObject> getRegistersByUserId(String userId) {
+        ArrayList<JSONObject> list = new ArrayList<>();
+
+        DBCursor cursor = collRegister.find();
+
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
-            if(obj.get("type").equals(key) && (obj.get(key)+"").equals(val))
+            if (obj.get("userId").equals(userId)) {
+                list.add(new JSONObject(JSON.serialize(obj)));
+            }
+        }
+
+        return list;
+    }
+
+    public JSONObject getElement(String key, String val) {
+
+        DBCursor cursor = null;
+        switch (key) {
+            case "user":
+                cursor = collUser.find();
+                break;
+            case "advert":
+                cursor = collAdvert.find();
+                break;
+            case "register":
+                cursor = collRegister.find();
+                break;
+        }
+
+        while (cursor.hasNext()) {
+            DBObject obj = cursor.next();
+            if ((obj.get(key) + "").equals(val)) {
                 return new JSONObject(JSON.serialize(obj));
+            }
         }
-        
+
         return null;
     }
-    
 
-    public BasicDBObject createDBOUser(String id, String firstName, String lastName, String headline,String skills) {
+    public BasicDBObject createDBOUser(String id, String firstName, String lastName,
+            String headline, String skills,String location,String pictureUrl,String emailAddress) {
         BasicDBObject doc = new BasicDBObject("user", id).
                 append("fn", firstName).
                 append("ln", lastName).
                 append("skills", skills).
                 append("headline", headline).
-                append("type","user");
+                append("location", location).
+                append("pictureUrl", pictureUrl).
+                append("emailAddress", emailAddress);
         return doc;
     }
-    public BasicDBObject createDBORegister(String userId,int advertCode){
+
+    public BasicDBObject createDBORegister(String userId, int advertCode) {
         BasicDBObject doc = new BasicDBObject("userId", userId).
-                append("advertCode", advertCode).
-                append("type","register");
+                append("advertCode", advertCode);
         return doc;
     }
-    public BasicDBObject createDBOAdvert(int code, String header, String definition, String requirements
-            , String activationTime, String closeTime,boolean active) {
+
+    public BasicDBObject createDBOAdvert(int code, String header, String definition, String requirements,
+            String activationTime, String closeTime, boolean active) {
         BasicDBObject doc = new BasicDBObject("advert", code).
                 append("header", header).
                 append("definition", definition).
                 append("requirements", requirements).
                 append("activationTime", activationTime).
                 append("closeTime", closeTime).
-                append("active", active).
-                append("type","advert");
+                append("active", active);
         return doc;
     }
 
-    public void addItemToDB(BasicDBObject doc) {
+    public void addItemToDB(BasicDBObject doc, int collNumber) {
+        DBCollection coll = null;
+        switch (collNumber) {
+            case 0:
+                coll = collUser;
+                break;
+            case 1:
+                coll = collAdvert;
+                break;
+            case 2:
+                coll = collRegister;
+                break;
+        }
         coll.insert(doc);
     }
-    public void updateAdvert(BasicDBObject newObj){
-        DBCursor cursor = coll.find();
-			
-         while (cursor.hasNext()) { 
+
+    public void updateAdvert(BasicDBObject newObj) {
+        DBCursor cursor = collAdvert.find();
+
+        while (cursor.hasNext()) {
             DBObject obj = cursor.next();
-            if(obj.get("type").equals("advert") && obj.get("advert").equals(newObj.get("advert"))){
-                coll.update(obj, newObj);
+            if (obj.get("advert").equals(newObj.get("advert"))) {
+                collAdvert.update(obj, newObj);
                 return;
             }
-            
-         }
+
+        }
     }
-    public void updateUser(BasicDBObject newObj){
-        DBCursor cursor = coll.find();
-			
-         while (cursor.hasNext()) { 
+
+    public void updateUser(BasicDBObject newObj) {
+        DBCursor cursor = collUser.find();
+
+        while (cursor.hasNext()) {
             DBObject obj = cursor.next();
-            if(obj.get("type").equals("user") && obj.get("user").equals(newObj.get("user"))){
-                coll.update(obj, newObj);
+            if (obj.get("user").equals(newObj.get("user"))) {
+                collUser.update(obj, newObj);
                 return;
             }
-            
-         }
-    }    
+
+        }
+    }
 }

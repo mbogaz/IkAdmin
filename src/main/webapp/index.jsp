@@ -58,7 +58,7 @@
         <input type="password" id="password" name="password" class="form-control" placeholder="Şifre" value="ahmet">
 
         <button class="btn btn-lg btn-primary btn-block" type="submit">IK Olarak Giriş Yap</button>
-        <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86vvecy3ntqbft&redirect_uri=http://localhost:26201/mavenproject2/Actions/linkedinLogin.jsp?type=1" 
+        <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86vvecy3ntqbft&scope=r_basicprofile%20r_emailaddress&redirect_uri=http://localhost:26201/mavenproject2/Actions/linkedinLogin.jsp?type=1" 
            class="btn btn-lg btn-primary btn-block">LinkedIn İle Giriş Yap</a>
         <a href="jobs.jsp" class="btn btn-lg btn-primary btn-block">İlanları Gör</a>
       </form>

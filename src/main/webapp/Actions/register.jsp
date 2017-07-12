@@ -15,7 +15,7 @@
     int advertCode = Integer.parseInt(request.getParameter("advertCode"));
     
     if(request.getParameter("type").equals("1"))
-        mongo.addItemToDB(mongo.createDBORegister(userId,advertCode));
+        mongo.addItemToDB(mongo.createDBORegister(userId,advertCode),2);
     else if(request.getParameter("type").equals("2"))
         mongo.deleteRegister(userId,advertCode);
     

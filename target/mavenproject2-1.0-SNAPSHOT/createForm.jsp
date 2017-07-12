@@ -13,7 +13,7 @@
         String definition = request.getParameter("definition"); 
         String requirements = request.getParameter("skills"); 
         mongo.addItemToDB(mongo.createDBOAdvert(code, header, definition, requirements
-                , activationTime, closeTime, active));
+                , activationTime, closeTime, active),1);
         response.sendRedirect(request.getContextPath() + "/editForms.jsp");
     } else { 
     }
@@ -44,8 +44,8 @@
                             
                             <input type="number" name="code" class="form" placeholder="İlan Kodu" required/>
                             <input type="text" name="header" class="form" placeholder="Başlık" required/>
-                            Aktivasyon Zamanı: <input type="date" name="activationTime" class="form" required/>                            
-                            Kapanma Zamanı: <input type="date" name="closeTime" class="form" required/>
+                            Aktivasyon Zamanı: <input type="datetime-local" name="activationTime" class="form" required/>                            
+                            Kapanma Zamanı: <input type="datetime-local" name="closeTime" class="form" required/>
                             <div class="form">
                                 İlan Aktif mi: <input type="checkbox" name="isActive" checked data-toggle="toggle">
                             </div>
