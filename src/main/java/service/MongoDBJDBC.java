@@ -54,6 +54,8 @@ public class MongoDBJDBC {
         //mongo.updateAdvert(mongo.createDBOAdvert(1, "İlan aAa", "Çok kod yazılmalı", "c,java", "2017-07-01", "2017-08-01", true));
         //System.out.println(mongo.isUserRegistered("RfBtpuSTyl", 3));
         //mongo.getRegistersByAdvertCode(1);
+        //mongo.deleteAll(2);
+        mongo.updateRegister(mongo.createDBORegister("cLqL5-REeC", 1, 3));
         mongo.printAll();
         //System.out.println(mongo.getElement("advert", 1+""));
         //see records for a type
@@ -76,6 +78,20 @@ public class MongoDBJDBC {
                 colls[i].remove(cursors[i].next());
             }
         }
+    }
+
+    public void deleteAll(int section) {
+        //use wisely,removes every entry in db
+        BasicDBObject document = new BasicDBObject();
+
+        DBCursor[] cursors = {collUser.find(), collAdvert.find(), collRegister.find()};
+        DBCollection[] colls = {collUser, collAdvert, collRegister};
+
+        colls[section].remove(document);
+        while (cursors[section].hasNext()) {
+            colls[section].remove(cursors[section].next());
+        }
+
     }
 
     public void printAll() {
@@ -221,7 +237,7 @@ public class MongoDBJDBC {
     }
 
     public BasicDBObject createDBOUser(String id, String firstName, String lastName,
-            String headline, String skills,String location,String pictureUrl,String emailAddress) {
+            String headline, String skills, String location, String pictureUrl, String emailAddress) {
         BasicDBObject doc = new BasicDBObject("user", id).
                 append("fn", firstName).
                 append("ln", lastName).
@@ -233,9 +249,10 @@ public class MongoDBJDBC {
         return doc;
     }
 
-    public BasicDBObject createDBORegister(String userId, int advertCode) {
+    public BasicDBObject createDBORegister(String userId, int advertCode, int status) {
         BasicDBObject doc = new BasicDBObject("userId", userId).
-                append("advertCode", advertCode);
+                append("advertCode", advertCode).
+                append("status", status);
         return doc;
     }
 
@@ -287,6 +304,20 @@ public class MongoDBJDBC {
             DBObject obj = cursor.next();
             if (obj.get("user").equals(newObj.get("user"))) {
                 collUser.update(obj, newObj);
+                return;
+            }
+
+        }
+    }
+
+    public void updateRegister(BasicDBObject newObj) {
+        DBCursor cursor = collRegister.find();
+
+        while (cursor.hasNext()) {
+            DBObject obj = cursor.next();
+            if (obj.get("userId").equals(newObj.get("userId"))
+                    && obj.get("advertCode").equals(newObj.get("advertCode"))) {
+                collRegister.update(obj, newObj);
                 return;
             }
 
