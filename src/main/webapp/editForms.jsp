@@ -13,6 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="resource/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link href="resource/css/signin.css" rel="stylesheet" >
+    <link href="resource/css/accordion.css" rel="stylesheet" >
     <style type="text/css">
     
     </style>
@@ -36,103 +37,67 @@
         
         <div class="col-md-12">
             
-        <div class="table-responsive">
+            
+            
+            
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
-                
-              <table id="mytable" class="table table-bordred table-striped">
-                   
-                   <thead>
-                   
-                    <th>İlan İsmi</th>
-                    <th>Aktivasyon Tarihi</th>
-                    <th>Kapanış Tarihi</th>
-                    <th>Açıklama</th>
-                    <th>Aktiflik Durumu</th>
-                    <th>Düzenle</th>
-                    <th>Başvurular</th>
-                    
-                   </thead>
-    <tbody>
-    
-   <% 
-       MongoDBJDBC mongo = new MongoDBJDBC();
+
+<%  MongoDBJDBC mongo = new MongoDBJDBC();
        Helper h = new Helper();
        ArrayList<JSONObject> list = mongo.getList("advert");
        h.sortArrayListById(list);
        int i = 0;
        for(JSONObject obj:list){ 
         int advertCode = obj.getInt("advert");
-   %>     
-    <tr>
-        <td><% out.println(obj.getString("header")); %></td>
-        <td><% out.println(obj.getString("activationTime")); %></td>
-        <td><% out.println(obj.getString("closeTime")); %></td>
-        <td><% out.println(obj.getString("definition")); %></td>
-        <td><% out.println(obj.getBoolean("active")==true?"Aktif":"Aktif Değil"); %></td>
-        <td><p data-placement="top" data-toggle="tooltip">
-                <button type="button" class="btn btn-info btn-s" data-toggle="modal" data-target="#myModal<%out.print(i);%>">Başvurular</button>
-                <a href="editForm.jsp?advert=<% out.println(obj.getInt("advert")); %>">
-                <button class="btn btn-primary btn-s" data-title="Edit" data-toggle="modal" data-target="#edit" >Düzenle</button></p>
-                </a>
-                
-                <!-- Modal -->
-                <div id="myModal<%out.print(i);%>" class="modal fade" role="dialog">
-                  <div class="modal-dialog">
-
-                    <!-- Modal content-->
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title"><% out.println("Başvuru Yapanlar"); %></h4>
-                      </div>
-                      <div class="modal-body">
-                        <p><%
+%>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="heading<% out.print(i);%>">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<% out.print(i);%>" aria-expanded="true" aria-controls="collapse<% out.print(i);%>">
+                        <i class="more-less glyphicon glyphicon-plus">Başvuruları Göster</i>
+                        <% out.println(obj.getString("header")); %>
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse<% out.print(i);%>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<% out.print(i);%>">
+                <div class="panel-body">
+                     <p><%
                             
                             ArrayList<JSONObject> subList = mongo.getRegistersByAdvertCode(advertCode);
                             for(JSONObject subObj:subList){
-                                JSONObject userObj = mongo.getElement("user", subObj.getString("userId"));
+                                int status = subObj.getInt("status");
+                                String user = subObj.getString("userId");
+                                JSONObject userObj = mongo.getElement("user",user );
+                                String emailTo = userObj.getString("emailAddress");
                                 out.println(userObj.getString("fn")+" "+userObj.getString("ln")
                                     +"<a href=\"userDetail.jsp?user="+userObj.getString("user")+"\" style=\"text-decoration:none;\">"
                                     + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-                                            + "<button class=\"btn btn-primary btn-xs\">Detay</button></a>");    
+                                            + "<button class=\"btn btn-primary btn-xs\">Detay</button></a>");  
+                                out.println("<div class=\"btn-group\">"
+                                        + "<a class=\"btn btn-xs btn"+(status==1?"-warning":"-default")+"\" "
+                              + "href=\"Actions/register.jsp?return=1&type=3&advertCode="+advertCode+"&id="+user+"&emailTo="+emailTo+"\">İşleme Al</a>&nbsp;&nbsp;&nbsp;"
+                              + "<a class=\"btn btn-xs btn"+(status==2?"-success":"-default")+"\" "
+                              + "href=\"Actions/register.jsp?return=1&type=4&advertCode="+advertCode+"&id="+user+"&emailTo="+emailTo+"\">Kabul Et</a>&nbsp;&nbsp;&nbsp;"
+                              + "<a class=\"btn btn-xs btn"+(status==3?"-danger":"-default")+"\" "
+                              + "href=\"Actions/register.jsp?return=1&type=5&advertCode="+advertCode+"&id="+user+"&emailTo="+emailTo+"\">Reddet</a>"
+                                      + "</div></hr>");
                             }
                             
                             
                             %></p>
-                        </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
-                            </div>
-                          </div>
-
-                        </div>
-                      </div> 
-
+                </div>
+                <div class="panel-footer" style="background-color: #333333;">
+                    <a href="editForm.jsp?advert=<% out.println(obj.getInt("advert")); %>" style=" color: blanchedalmond;text-decoration: none;">İlanı Düzenle</a>
+                </div>
                 
-        </td>
-        <td>
-            <img data-toggle="collapse" data-parent="#accordion" href="#collapse<% out.print(i); %>" src="resource/img/navigate-down.png" width="32" />
-            
-        </td>
-        <div id="collapse<% out.print(i); %>" class="panel-collapse collapse in">
-        <div class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
-      </div>
-    </tr>
-    
-    <% i++;} %>
-   
-    
-   
-    
-    </tbody>
-        
-</table>
-
 
             </div>
-            
+        </div>
+
+<% i++;} %>
+    </div><!-- panel-group -->
+    
         </div>
 	</div>
 </div>

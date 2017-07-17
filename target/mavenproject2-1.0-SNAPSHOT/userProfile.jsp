@@ -9,10 +9,12 @@
         String ln = request.getParameter("ln");
         String headline = request.getParameter("headline");
         String skills = request.getParameter("skills");
+        out.println(skills);
         String location = request.getParameter("location");
         String emailAddress = request.getParameter("emailAddress");
+        String blackList = request.getParameter("blackList");
         mongo.updateUser(mongo.createDBOUser(session.getAttribute("id")+"", fn, ln,
-                headline,skills,location,session.getAttribute("pictureUrl")+"",emailAddress));
+                headline,skills,location,session.getAttribute("pictureUrl")+"",emailAddress,blackList));
         session.setAttribute("skills", skills);
         response.sendRedirect(request.getContextPath() + "/listJobs.jsp");
         

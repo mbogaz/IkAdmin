@@ -23,14 +23,7 @@
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-        window.alert = function(){};
-        var defaultCSS = document.getElementById('bootstrap-css');
-        function changeCSS(css){
-            if(css) $('head > link').filter(':first').replaceWith('<link rel="stylesheet" href="'+ css +'" type="text/css" />'); 
-            else $('head > link').filter(':first').replaceWith(defaultCSS); 
-        }
-    </script>
+
 </head>
 <body>
  <jsp:include page="Views/navbarUser.jsp" />	
@@ -48,9 +41,9 @@
                    
                    <thead>
                    
-                    <th>İlan İsmi</th>
-                    <th>Aktivasyon Tarihi</th>
-                    <th>Kapanış Tarihi</th>
+                    <th onclick="sortTable(0)">İlan İsmi</th>
+                    <th onclick="sortTable(1)">Aktivasyon Tarihi</th>
+                    <th onclick="sortTable(2)">Kapanış Tarihi</th>
                     <th>Kodu</th>
                     <th>Eylemler</th>
                     
@@ -64,9 +57,10 @@
        //out.print(session.getAttribute("skills"));
        ArrayList<JSONObject> list = mongo.getList("advert");
        h.sortArrayListByRelevance(list, skills);
-
+       
        int i = 0;
        for(JSONObject obj:list){ 
+            boolean blackList = !mongo.getElement("user", session.getAttribute("id")+"").isNull("blackList");
             String activationTime = obj.getString("activationTime").replace("T", " ");
             String closeTime = obj.getString("closeTime").replace("T", " ");
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-dd-MM HH:mm");
@@ -90,10 +84,8 @@
                 
                 <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal<%out.print(i);%>">Detayları Gör</button>
                 
-                <%if(isRegistered) {%>
-                <a href="Actions/register.jsp?type=2&advertCode=<%out.print(advertCode);%>">
-                    <button class="btn btn-danger btn-xs">Başvuruyu Geri Al</button></p>
-                </a>
+                <%if(isRegistered || blackList) {%>
+                
                 <% }else{ %>
                 <a href="Actions/register.jsp?type=1&advertCode=<%out.print(advertCode);%>">
                     <button class="btn btn-success btn-xs">Başvur</button></p>
@@ -203,24 +195,61 @@
   </div>
       <!-- /.modal-dialog --> 
     </div>
-	<script type="text/javascript">
-	$(document).ready(function(){
-$("#mytable #checkall").click(function () {
-        if ($("#mytable #checkall").is(':checked')) {
-            $("#mytable input[type=checkbox]").each(function () {
-                $(this).prop("checked", true);
-            });
-
-        } else {
-            $("#mytable input[type=checkbox]").each(function () {
-                $(this).prop("checked", false);
-            });
+	<script>
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("mytable");
+  switching = true;
+  //Set the sorting direction to ascending:
+  dir = "asc"; 
+  /*Make a loop that will continue until
+  no switching has been done:*/
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    rows = table.getElementsByTagName("TR");
+    /*Loop through all table rows (except the
+    first, which contains table headers):*/
+    for (i = 1; i < (rows.length - 1); i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*Get the two elements you want to compare,
+      one from current row and one from the next:*/
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /*check if the two rows should switch place,
+      based on the direction, asc or desc:*/
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
         }
-    });
-    
-    $("[data-toggle=tooltip]").tooltip();
-});
-
-	</script>
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+      and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      //Each time a switch is done, increase this count by 1:
+      switchcount ++; 
+    } else {
+      /*If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again.*/
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
 </body>
 </html>

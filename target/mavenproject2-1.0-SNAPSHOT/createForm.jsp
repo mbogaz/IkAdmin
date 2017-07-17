@@ -67,13 +67,6 @@
                         <div class="clear"></div>
                     </form>
 
-                    <!-- Your Mail Message -->
-                    <div class="mail-message-area">
-                        <!-- Message -->
-                        <div class="alert gray-bg mail-message not-visible-message">
-                            <strong>Thank You !</strong> Your email has been delivered.
-                        </div>
-                    </div>
 
                 </div><!-- End Contact Form Area -->
 </div> <!-- /container -->

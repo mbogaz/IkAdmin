@@ -80,7 +80,7 @@ public class LinkedinAuthentication {
         List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         urlParameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
         urlParameters.add(new BasicNameValuePair("code", code));
-        urlParameters.add(new BasicNameValuePair("redirect_uri", "http://localhost:26201/mavenproject2/Actions/linkedinLogin.jsp?type=1"));
+        urlParameters.add(new BasicNameValuePair("redirect_uri", "http://localhost:21222/mavenproject2/Actions/linkedinLogin.jsp?type=1"));
         urlParameters.add(new BasicNameValuePair("client_id", "86vvecy3ntqbft"));
         urlParameters.add(new BasicNameValuePair("client_secret", "5CxvPtnPobeEKkga"));
 

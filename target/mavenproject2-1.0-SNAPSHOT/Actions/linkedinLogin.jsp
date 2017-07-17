@@ -10,17 +10,22 @@
     LinkedinAuthentication la = new LinkedinAuthentication();
     MongoDBJDBC mongo = new MongoDBJDBC();
     if (request.getParameter("type").equals("1")) {
+        
+        //get token
         String code = request.getParameter("code");
         String res = la.getToken(code);
+        //parse linkedin response
         JSONObject obj = new JSONObject(res);
         String token = obj.getString("access_token").toString();
-        //out.println("token:"+token);
+        //get info from linkedin
         String info = la.authLinkedin(token);
         JSONObject user = new JSONObject(info);
-
         String id = user.getString("id");
+        
         //id her türlü linkedin den çekilecek
-        String firstName = "", lastName = "", headline = "", skills = "", location = "", pictureUrl = "", emailAddress = "";
+        String firstName = "", lastName = "", headline = "", skills = ""
+                , location = "", pictureUrl = "", emailAddress = "",blackList="";
+        
         if (mongo.isUserExist(id)) {//kayıtlıysa db den çek
             obj = mongo.getElement("user", id);
             firstName = obj.getString("fn");
@@ -29,11 +34,13 @@
             location = obj.getString("location");
             pictureUrl = obj.getString("pictureUrl");
             emailAddress = obj.getString("emailAddress");
-            if (obj.isNull("skills")) {
-                skills = "";
-            } else {
+            
+            if (!obj.isNull("skills")) 
                 skills = obj.getString("skills");
-            }
+            
+            if (!obj.isNull("blackList")) 
+                blackList = obj.getString("blackList");
+            
         } else {//kayıtlı değilse linkedin den çek
             firstName = user.getString("firstName");
             lastName = user.getString("lastName");
@@ -42,7 +49,7 @@
             location = locationObj.getString("name");
             pictureUrl = user.getString("pictureUrl");
             emailAddress = user.getString("emailAddress");
-            mongo.addItemToDB(mongo.createDBOUser(id, firstName, lastName, headline, "", location, pictureUrl, emailAddress), 0);
+            mongo.addItemToDB(mongo.createDBOUser(id, firstName, lastName, headline, "", location, pictureUrl, emailAddress,""), 0);
         }
         session.setAttribute("id", id);
         session.setAttribute("firstName", firstName);

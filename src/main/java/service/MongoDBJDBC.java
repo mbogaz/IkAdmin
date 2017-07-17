@@ -46,24 +46,9 @@ public class MongoDBJDBC {
 
     public static void main(String args[]) {
         MongoDBJDBC mongo = new MongoDBJDBC();
-        /*BasicDBObject doc = new BasicDBObject("user", "mbogaz").
-                append("fn", "Mahmut").
-                append("ln", "Boğaz").
-                append("headline", "Marmara");*/
-        //mongo.addUser(doc);
-        //mongo.updateAdvert(mongo.createDBOAdvert(1, "İlan aAa", "Çok kod yazılmalı", "c,java", "2017-07-01", "2017-08-01", true));
-        //System.out.println(mongo.isUserRegistered("RfBtpuSTyl", 3));
-        //mongo.getRegistersByAdvertCode(1);
-        //mongo.deleteAll(2);
-        mongo.updateRegister(mongo.createDBORegister("cLqL5-REeC", 1, 3));
+        //mongo.deleteAll(0);
         mongo.printAll();
-        //System.out.println(mongo.getElement("advert", 1+""));
-        //see records for a type
-        /*for(JSONObject obj:mongo.getList("advert")){
-            System.out.println(obj.get("header"));
-        }*/
-        //mongo.deleteAll();
-        //System.out.println(mongo.isUserExist("mbMahmutogaz"));
+        
     }
 
     public void deleteAll() {
@@ -81,7 +66,11 @@ public class MongoDBJDBC {
     }
 
     public void deleteAll(int section) {
-        //use wisely,removes every entry in db
+        /*
+        section 0 -> user
+        section 1 -> advert
+        section 2 -> register
+        */
         BasicDBObject document = new BasicDBObject();
 
         DBCursor[] cursors = {collUser.find(), collAdvert.find(), collRegister.find()};
@@ -121,7 +110,7 @@ public class MongoDBJDBC {
     public void deleteRegister(String userId, int advertCode) {
         DBCursor cursor = collRegister.find();
         int i = 1;
-
+        
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
             if (obj.get("userId").equals(userId)
@@ -144,6 +133,18 @@ public class MongoDBJDBC {
         }
 
         return false;
+    }
+    
+    public void banUser(String userId){
+        DBCursor cursor = collRegister.find();
+
+        while (cursor.hasNext()) {
+            DBObject obj = cursor.next();
+            if (obj.get("userId").equals(userId)) {
+                collRegister.update(obj, createDBORegister(userId, Integer.parseInt(obj.get("advertCode")+""), 3));
+            }
+        }
+
     }
 
     public boolean isUserRegistered(String userId, int advertCode) {
@@ -236,8 +237,9 @@ public class MongoDBJDBC {
         return null;
     }
 
+
     public BasicDBObject createDBOUser(String id, String firstName, String lastName,
-            String headline, String skills, String location, String pictureUrl, String emailAddress) {
+            String headline, String skills, String location, String pictureUrl, String emailAddress,String blackList) {
         BasicDBObject doc = new BasicDBObject("user", id).
                 append("fn", firstName).
                 append("ln", lastName).
@@ -245,7 +247,8 @@ public class MongoDBJDBC {
                 append("headline", headline).
                 append("location", location).
                 append("pictureUrl", pictureUrl).
-                append("emailAddress", emailAddress);
+                append("emailAddress", emailAddress).
+                append("blackList",blackList);
         return doc;
     }
 
@@ -309,6 +312,7 @@ public class MongoDBJDBC {
 
         }
     }
+    
 
     public void updateRegister(BasicDBObject newObj) {
         DBCursor cursor = collRegister.find();
@@ -323,4 +327,5 @@ public class MongoDBJDBC {
 
         }
     }
+    
 }
