@@ -42,7 +42,7 @@
                    <thead>
                    
                     <th onclick="sortTable(0)">İlan İsmi</th>
-                    <th onclick="sortTable(1)">Aktivasyon Tarihi</th>
+                    <th >İstenilen Özellikler</th>
                     <th onclick="sortTable(2)">Kapanış Tarihi</th>
                     <th>Kodu</th>
                     <th>Eylemler</th>
@@ -57,10 +57,10 @@
        //out.print(session.getAttribute("skills"));
        ArrayList<JSONObject> list = mongo.getList("advert");
        h.sortArrayListByRelevance(list, skills);
-       
+       boolean blackList = !mongo.getElement("user", session.getAttribute("id")+"").getString("blackList").equals("");
+
        int i = 0;
        for(JSONObject obj:list){ 
-            boolean blackList = !mongo.getElement("user", session.getAttribute("id")+"").isNull("blackList");
             String activationTime = obj.getString("activationTime").replace("T", " ");
             String closeTime = obj.getString("closeTime").replace("T", " ");
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-dd-MM HH:mm");
@@ -73,19 +73,27 @@
             if(obj.getBoolean("active")){
                 String userId = session.getAttribute("id")+"";
                 int advertCode = obj.getInt("advert");
-                boolean isRegistered = mongo.isUserRegistered(userId, advertCode);
+                int isRegistered = mongo.isUserRegistered(userId, advertCode);
+
    %>     
     <tr>
         <td><% out.println(obj.getString("header")); %></td>
-        <td><% out.println(activationTime.replace(" ", "/")); %></td>
+        <td><% out.println(obj.getString("requirements")); %></td>
         <td><% out.println(closeTime.replace(" ", "/")); %></td>
         <td><% out.println(obj.getInt("advert")); %></td>
         <td><p data-placement="top" data-toggle="tooltip">
                 
                 <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#myModal<%out.print(i);%>">Detayları Gör</button>
                 
-                <%if(isRegistered || blackList) {%>
-                
+                <%if(isRegistered!=-1 || blackList) {%>
+                <span style="color:crimson;"><%
+                    switch(isRegistered){
+                        case 0: out.print("Başvuruldu");break;
+                        case 1: out.print("İşleme Alındı");break;
+                        case 2: out.print("Kabul Edildi");break;
+                        case 3: out.print("Reddedildi");break;
+                    }
+                %></span>
                 <% }else{ %>
                 <a href="Actions/register.jsp?type=1&advertCode=<%out.print(advertCode);%>">
                     <button class="btn btn-success btn-xs">Başvur</button></p>

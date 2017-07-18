@@ -147,17 +147,17 @@ public class MongoDBJDBC {
 
     }
 
-    public boolean isUserRegistered(String userId, int advertCode) {
+    public int isUserRegistered(String userId, int advertCode) {
         DBCursor cursor = collRegister.find();
 
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
             if (obj.get("userId").equals(userId) && obj.get("advertCode").equals(advertCode)) {
-                return true;
+                return Integer.parseInt(obj.get("status")+"");
             }
         }
 
-        return false;
+        return -1;
     }
 
     public ArrayList<JSONObject> getList(String type) {

@@ -1,7 +1,10 @@
+<%@page import="java.util.Date"%>
+<%@page import="java.util.UUID"%>
 <%@page import="service.MongoDBJDBC"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <% 
+    int uniqeId = 0;
     if ("POST".equalsIgnoreCase(request.getMethod())) { 
         MongoDBJDBC mongo = new MongoDBJDBC();
         request.setCharacterEncoding("UTF-8");
@@ -16,6 +19,7 @@
                 , activationTime, closeTime, active),1);
         response.sendRedirect(request.getContextPath() + "/editForms.jsp");
     } else { 
+        uniqeId = (int) (new Date().getTime()/1000);
     }
 %> 
 <!DOCTYPE html>
@@ -42,10 +46,10 @@
                         <!-- Left Inputs -->
                         <div class="col-xs-6 wow animated slideInLeft" data-wow-delay=".5s">
                             
-                            <input type="number" name="code" class="form" placeholder="İlan Kodu" required/>
+                            <input type="number" name="code" class="form" placeholder="İlan Kodu" value="<%out.print(uniqeId);%>" readonly/>
                             <input type="text" name="header" class="form" placeholder="Başlık" required/>
-                            Aktivasyon Zamanı: <input type="datetime-local" name="activationTime" class="form" required/>                            
-                            Kapanma Zamanı: <input type="datetime-local" name="closeTime" class="form" required/>
+                            Aktivasyon Zamanı: <input id="timeActive" type="datetime-local" name="activationTime" class="form" required/>                            
+                            Kapanma Zamanı: <input id="timeClose" type="datetime-local" name="closeTime" class="form" required/>
                             <div class="form">
                                 İlan Aktif mi: <input type="checkbox" name="isActive" checked data-toggle="toggle">
                             </div>
@@ -68,7 +72,16 @@
                     </form>
 
 
-                </div><!-- End Contact Form Area -->
-</div> <!-- /container -->
+                </div>
+                <script>
+                   var d = new Date() ; 
+                   var time = d.getFullYear()+"-"+("0" + (d.getMonth()+1)).slice(-2)+"-"+("0" + d.getDate()).slice(-2)+"T"+("0" + d.getHours()).slice(-2)+":"+("0" + d.getMinutes()).slice(-2);
+                   var time2 = d.getFullYear()+"-"+("0" + (d.getMonth()+2)).slice(-2)+"-"+("0" + d.getDate()).slice(-2)+"T"+("0" + d.getHours()).slice(-2)+":"+("0" + d.getMinutes()).slice(-2);
+                   document.getElementById("timeActive").setAttribute("min", time);
+                   document.getElementById("timeActive").setAttribute("value", time);
+                   document.getElementById("timeClose").setAttribute("min", time);
+                   document.getElementById("timeClose").setAttribute("value", time2);
+                </script>
+</div>
  </body>
 </html>

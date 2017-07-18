@@ -16,6 +16,7 @@
           <ul class="nav navbar-nav">
             <li><a href="createForm.jsp">Yeni İlan Ekle</a></li>
             <li><a href="editForms.jsp">İlanları Düzenle</a></li>
+            <li><a href="listUsers.jsp">Tüm Adaylar</a></li>
             <li><a href="Actions/logout.jsp">Çıkış Yap</a></li>
           </ul>
         </div>

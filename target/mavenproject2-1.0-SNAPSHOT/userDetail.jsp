@@ -51,11 +51,14 @@
                             <a href="Actions/toBlackList.jsp?type=1&userId=<% out.print(user); %>" 
                                class="btn btn-s btn-primary btn-block" style="width:50%">Kara Listeden Çıkar</a>
                     <% } %>
+                    
+                    
                             <!-- Modal -->
                             <div class="modal fade" id="myModal" role="dialog">
                               <div class="modal-dialog">
                                   <form action="Actions/toBlackList.jsp?type=0" method="post">
                                       <input type="hidden" name="userId" value="<% out.print(user); %>">
+                                      
                                 <!-- Modal content-->
                                 <div class="modal-content">
                                   <div class="modal-header">
@@ -76,8 +79,9 @@
                                 </form>
 
 
-                              </div>
+                              </div>                                 
                             </div>
+                                  
                             </br></br>
                             <p><label>Durum:&nbsp;<% out.print(obj.getString("headline")); %></label></p>
                             <p><label>Lokasyon:&nbsp;<% out.print(obj.getString("location")); %></label></p>
@@ -90,29 +94,41 @@
 <div class="container">   
     <div class="" style="max-width: 1000px;padding-left: 15px;">
         <hr style="color: black; height: 1px; background-color:black;" />
-        <div class="col-xs-12 wow animated slideInLeft" data-wow-delay=".5s">         
+        <div class="col-xs-12 wow animated slideInLeft" data-wow-delay=".5s"> 
+            
                 <h3>Tüm Başvuruları</h3>
+                
                 <%
                   ArrayList<JSONObject> registerList = mongo.getRegistersByUserId(obj.getString("user"));
                   for(JSONObject registerObj:registerList){
                       int status = registerObj.getInt("status");
                       int advertCode = registerObj.getInt("advertCode");
                       String emailTo = obj.getString("emailAddress");
-                      out.println("</br>"
-                              +"<div class=\"row\"><div class=\"col-sm-4\"><a href=\"editForms.jsp\">"
+                
+                      
+                      out.println("<div class=\"row\">\n"
+                              + "<div class=\"col-sm-3\"><a href=\"editForms.jsp\">"
                               +mongo.getElement("advert", advertCode+"").getString("header")
                               +"</a></div>");
-                      out.println("<a class=\"btn btn-xs btn"+(status==1?"-warning":"-default")+"\" "
-                              + "href=\"Actions/register.jsp?return=0&type=3&advertCode="+advertCode+"&id="+user+"&emailTo="+emailTo+"\">İşleme Al</a>&nbsp;&nbsp;&nbsp;"
-                              + "<a class=\"btn btn-xs btn"+(status==2?"-success":"-default")+"\" "
-                              + "href=\"Actions/register.jsp?return=0&type=4&advertCode="+advertCode+"&id="+user+"&emailTo="+emailTo+"\">Kabul Et</a>&nbsp;&nbsp;&nbsp;"
-                              + "<a class=\"btn btn-xs btn"+(status==3?"-danger":"-default")+"\" "
-                              + "href=\"Actions/register.jsp?return=0&type=5&advertCode="+advertCode+"&id="+user+"&emailTo="+emailTo+"\">Reddet</a></br>"
-                                      + "</div>");
-                  }
-
+                      if(obj.isNull("blackList")){
+                      %>
+                      <div class="btn-group col-sm-3">
+                      <a class="btn btn-xs btn<% out.print(status==1?"-warning":"-default"); %>" 
+                         href="Actions/register.jsp?return=0&type=3&advertCode=<% out.print(advertCode); %>&id=<% out.print(user); %>&emailTo=<% out.print(emailTo); %>"
+                        >İşleme Al</a>&nbsp;&nbsp;&nbsp;
+                      <a class="btn btn-xs btn<% out.print(status==2?"-success":"-default"); %>" 
+                         href="Actions/register.jsp?return=0&type=4&advertCode=<% out.print(advertCode); %>&id=<% out.print(user); %>&emailTo=<% out.print(emailTo); %>"
+                        >Kabul Et</a>&nbsp;&nbsp;&nbsp;
+                      <a class="btn btn-xs btn<% out.print(status==3?"-danger":"-default"); %>" 
+                         href="Actions/register.jsp?return=0&type=5&advertCode=<% out.print(advertCode); %>&id=<% out.print(user); %>&emailTo=<% out.print(emailTo); %>"
+                        >Reddet</a>&nbsp;&nbsp;&nbsp;
+                      </div>
+                 <% 
+                     }
+                      out.println("</div>\n</br>");
+                }
                 %>
-        </div>             
+                    
     </div>                 
 </div> <!-- /container -->
  </body>

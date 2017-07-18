@@ -56,7 +56,7 @@
                         
                         <div class="col-xs-6 wow animated slideInLeft" data-wow-delay=".5s">
                             
-                            <input type="number" name="code" class="form" value="<% out.print(advertId+""); %>" placeholder="İlan Kodu" />
+                            <input type="number" name="code" class="form" value="<% out.print(advertId+""); %>" placeholder="İlan Kodu" readonly/>
                             
                             <input type="text" name="header" class="form" value="<% out.print(header); %>" placeholder="Başlık" />
                             

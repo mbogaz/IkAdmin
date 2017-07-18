@@ -14,6 +14,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
+            <li><a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86vvecy3ntqbft&scope=r_basicprofile%20r_emailaddress&redirect_uri=http://localhost:21222/mavenproject2/Actions/linkedinLogin.jsp?type=1">Linked-in ile Giriş Yap</a></li>
             <li><a href="index.jsp">Çıkış Yap</a></li>
           </ul>
         </div>
