@@ -1,5 +1,6 @@
 package service;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import com.mongodb.WriteConcern;
@@ -9,12 +10,17 @@ import com.mongodb.DBCollection;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.DBCursor;
+import com.mongodb.MongoClientURI;
 
 import com.mongodb.ServerAddress;
 import com.mongodb.util.JSON;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import org.json.JSONObject;
 
 public class MongoDBJDBC {
@@ -22,7 +28,7 @@ public class MongoDBJDBC {
     DBCollection collUser;
     DBCollection collAdvert;
     DBCollection collRegister;
-
+    
     public MongoDBJDBC() {
         try {
 
@@ -31,13 +37,13 @@ public class MongoDBJDBC {
 
             // Now connect to your databases
             DB db = mongoClient.getDB("obss");
-
-            char[] password = new char[10];
-            db.authenticate("admin", password);
+            //char[] password = new char[10];
+            //db.authenticate("admin", password);
 
             collUser = db.getCollection("Users");
             collAdvert = db.getCollection("Advert");
             collRegister = db.getCollection("Register");
+            
 
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -46,9 +52,8 @@ public class MongoDBJDBC {
 
     public static void main(String args[]) {
         MongoDBJDBC mongo = new MongoDBJDBC();
-        //mongo.deleteAll(0);
-        mongo.printAll();
         
+        mongo.printAll();
     }
 
     public void deleteAll() {
@@ -94,6 +99,27 @@ public class MongoDBJDBC {
         }
     }
 
+    public ArrayList<JSONObject> freeTextSearch(String regex){
+        ArrayList<JSONObject> list = new ArrayList<>();
+        
+        BasicDBList orList = new BasicDBList();
+        orList.add(new BasicDBObject("fn", new BasicDBObject("$regex",regex).append("$options", "i")));
+        orList.add(new BasicDBObject("ln", new BasicDBObject("$regex",regex).append("$options", "i")));
+        orList.add(new BasicDBObject("skills", new BasicDBObject("$regex",regex).append("$options", "i")));
+        orList.add(new BasicDBObject("headline", new BasicDBObject("$regex",regex).append("$options", "i")));
+        orList.add(new BasicDBObject("location", new BasicDBObject("$regex",regex).append("$options", "i")));
+        orList.add(new BasicDBObject("emailAddress", new BasicDBObject("$regex",regex).append("$options", "i")));
+        orList.add(new BasicDBObject("blackList", new BasicDBObject("$regex",regex).append("$options", "i")));
+        DBCursor cursor = collUser.find( new BasicDBObject("$or", orList));
+
+        while (cursor.hasNext()) {
+            DBObject obj = cursor.next();
+            list.add(new JSONObject(JSON.serialize(obj)));
+        }
+        
+        return list;
+    }
+    
     public void deleteUser(String id) {
         DBCursor cursor = collUser.find();
         int i = 1;
@@ -102,6 +128,19 @@ public class MongoDBJDBC {
             DBObject obj = cursor.next();
             if (obj.get("user").equals(id)) {
                 collUser.remove(obj);
+            }
+        }
+
+    }
+    
+    public void deleteAdvert(int id) {
+        DBCursor cursor = collAdvert.find();
+        int i = 1;
+
+        while (cursor.hasNext()) {
+            DBObject obj = cursor.next();
+            if (obj.get("advert").equals(id)) {
+                collAdvert.remove(obj);
             }
         }
 
@@ -135,12 +174,15 @@ public class MongoDBJDBC {
         return false;
     }
     
-    public void banUser(String userId){
+    public void banUser(String userId,String emailTo){
         DBCursor cursor = collRegister.find();
 
         while (cursor.hasNext()) {
             DBObject obj = cursor.next();
             if (obj.get("userId").equals(userId)) {
+                try {
+                    MailService.generateAndSendEmail(Integer.parseInt(obj.get("advertCode")+"") + " nolu ilana olan başvurunuz reddedilmiştir", emailTo);
+                } catch (MessagingException ex) {}
                 collRegister.update(obj, createDBORegister(userId, Integer.parseInt(obj.get("advertCode")+""), 3));
             }
         }

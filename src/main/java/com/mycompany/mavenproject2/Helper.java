@@ -10,17 +10,19 @@ import java.util.Collections;
 import static java.util.Collections.list;
 import java.util.Comparator;
 import org.json.JSONObject;
+import service.MongoDBJDBC;
 
 /**
  *
  * @author mahmut
  */
 public class Helper {
+    MongoDBJDBC mongo;
     public static void main(String[]args){
 
     }
     public Helper(){
-        
+        mongo = new MongoDBJDBC();
     }
     public void sortArrayListByRelevance(ArrayList<JSONObject> list,final String skills){
        Collections.sort(list, new Comparator<JSONObject>() {
@@ -45,7 +47,12 @@ public class Helper {
     
     public int getConflictNumber(JSONObject obj,String skills){
         int conflict=0;
-        String data = obj.getString("requirements");
+        String data ;
+        try{
+            data = obj.getString("requirements");
+        }catch(Exception e){
+            data = mongo.getElement("user", obj.getString("userId")).getString("skills");
+        }
         String[] arr = data.split(",");
         String[] arr2 = skills.split(",");
         for(String str:arr){

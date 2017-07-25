@@ -19,15 +19,15 @@
         response.sendRedirect(request.getContextPath() + "/listJobs.jsp");
     } else if (proc == 3) {//iknın başvuruyu işleme alması
         mongo.updateRegister(mongo.createDBORegister(id, advertCode, 1));
-        MailService.generateAndSendEmail(advertCode + "nolu ilana olan basvurunuz isleme alınmıştır", emailTo);
+        MailService.generateAndSendEmail(advertCode + " nolu ilana olan basvurunuz isleme alınmıştır", emailTo);
         response.sendRedirect(request.getContextPath() + "/userDetail.jsp?user=" + id);
     } else if (proc == 4) {//iknın başvuruyu kabul etmesi
         mongo.updateRegister(mongo.createDBORegister(id, advertCode, 2));
-        MailService.generateAndSendEmail(advertCode + "nolu ilana olan basvurunuz kabul edilmistir", emailTo);
+        MailService.generateAndSendEmail(advertCode + " nolu ilana olan başvurunuz kabul edilmiştir", emailTo);
         response.sendRedirect(request.getContextPath() + "/userDetail.jsp?user=" + id);
     } else if (proc == 5) {//iknın başvuruyu reddetmesi
         mongo.updateRegister(mongo.createDBORegister(id, advertCode, 3));
-        MailService.generateAndSendEmail(advertCode + "nolu ilana olan basvurunuz reddedilmistir", emailTo);
+        MailService.generateAndSendEmail(advertCode + " nolu ilana olan başvurunuz reddedilmiştir", emailTo);
         response.sendRedirect(request.getContextPath() + "/userDetail.jsp?user=" + id);
     }
 

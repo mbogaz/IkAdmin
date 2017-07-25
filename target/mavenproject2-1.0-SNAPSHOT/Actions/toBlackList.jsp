@@ -10,7 +10,7 @@ JSONObject userObj = mongo.getElement("user", userId);
 String type = request.getParameter("type");
 if(type.equals("0")){
     userObj.put("blackList", commend);
-    mongo.banUser(userId);
+    mongo.banUser(userId,userObj.getString("emailAddress"));
     
 }else if(type.equals("1")){
     userObj.put("blackList", "");

@@ -7,6 +7,7 @@
 
 
 <%
+    
     LinkedinAuthentication la = new LinkedinAuthentication();
     MongoDBJDBC mongo = new MongoDBJDBC();
     if (request.getParameter("type").equals("1")) {
