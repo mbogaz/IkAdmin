@@ -181,6 +181,7 @@ public class MongoDBJDBC {
             DBObject obj = cursor.next();
             if (obj.get("userId").equals(userId)) {
                 try {
+                    if(Integer.parseInt(obj.get("status")+"")!=3)
                     MailService.generateAndSendEmail(Integer.parseInt(obj.get("advertCode")+"") + " nolu ilana olan başvurunuz reddedilmiştir", emailTo);
                 } catch (MessagingException ex) {}
                 collRegister.update(obj, createDBORegister(userId, Integer.parseInt(obj.get("advertCode")+""), 3));

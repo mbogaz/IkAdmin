@@ -50,7 +50,7 @@
             location = locationObj.getString("name");
             pictureUrl = user.getString("pictureUrl");
             emailAddress = user.getString("emailAddress");
-            mongo.addItemToDB(mongo.createDBOUser(id, firstName, lastName, headline, "", location, pictureUrl, emailAddress,""), 0);
+            mongo.addItemToDB(mongo.createDBOUser(id, firstName, lastName, headline, "", location, pictureUrl, emailAddress,null), 0);
         }
         session.setAttribute("id", id);
         session.setAttribute("firstName", firstName);
