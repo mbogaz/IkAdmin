@@ -21,7 +21,8 @@
         String requirements = request.getParameter("skills"); 
         mongo.addItemToDB(mongo.createDBOAdvert(code, header, definition, requirements
                 , activationTime, closeTime, active),1);
-        response.sendRedirect(request.getContextPath() + "/editForms.jsp");
+        out.println("<script>alert("+header+");</script>");
+        //response.sendRedirect(request.getContextPath() + "/editForms.jsp");
     } else { 
         uniqeId = (int) (new Date().getTime()/1000);
     }
@@ -87,7 +88,7 @@
                                     </div>
                                     <div class="portlet-body">
                                         <!-- BEGIN FORM-->
-                                        <form action="createForm.jsp" class="form-horizontal">
+                                        <form action="createForm.jsp" class="form-horizontal" method="post">
                                             <div class="form-body">
                                                 <div class="form-group">
                                                     <label class="control-label col-md-3">İlan Kodu
@@ -177,7 +178,6 @@
             <!-- END CONTAINER -->
             <jsp:include page="Views/footer.jsp" />
         </div>
-       
 
                 <script>
                    var d = new Date() ; 

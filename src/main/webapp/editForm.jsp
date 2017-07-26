@@ -188,15 +188,7 @@
         </div>
         
 
-                <script>
-                   var d = new Date() ; 
-                   var time = d.getFullYear()+"-"+("0" + (d.getMonth()+1)).slice(-2)+"-"+("0" + d.getDate()).slice(-2)+"T"+("0" + d.getHours()).slice(-2)+":"+("0" + d.getMinutes()).slice(-2);
-                   var time2 = d.getFullYear()+"-"+("0" + (d.getMonth()+2)).slice(-2)+"-"+("0" + d.getDate()).slice(-2)+"T"+("0" + d.getHours()).slice(-2)+":"+("0" + d.getMinutes()).slice(-2);
-                   document.getElementById("timeActive").setAttribute("min", time);
-                   document.getElementById("timeActive").setAttribute("value", time);
-                   document.getElementById("timeClose").setAttribute("min", time);
-                   document.getElementById("timeClose").setAttribute("value", time2);
-                </script>
+              
 </body>
 
 

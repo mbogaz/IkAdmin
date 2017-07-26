@@ -52,7 +52,8 @@ public class MongoDBJDBC {
 
     public static void main(String args[]) {
         MongoDBJDBC mongo = new MongoDBJDBC();
-        
+        mongo.addItemToDB(mongo.createDBOAdvert(1501071503, "asdsad","asdasd", "","2017-07-26T15%3A18", "2017-08-26T15%3A18"
+                ,  true),1);
         mongo.printAll();
     }
 
