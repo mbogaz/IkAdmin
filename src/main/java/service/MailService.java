@@ -47,7 +47,7 @@ public class MailService {
 		System.out.println("\n\n 3rd ===> Get Session and Send mail");
 		Transport transport = getMailSession.getTransport("smtp");
  
-		transport.connect("smtp.gmail.com", "diablomahmut@gmail.com", "12119885768a");
+		transport.connect("smtp.gmail.com", "*****", "*****");
 		transport.sendMessage(generateMailMessage, generateMailMessage.getAllRecipients());
 		transport.close();
 	}
